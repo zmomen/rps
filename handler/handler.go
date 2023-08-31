@@ -13,13 +13,13 @@ type Handler struct {
 
 func (h *Handler) ProcessReceipt(c echo.Context) error {
 	//TODO: implementation here
-	h.Processor.Calculate()
+	h.Processor.CalculatePoints()
 
 	return c.JSON(http.StatusCreated, 201)
 }
 
 func (h *Handler) GetReceiptPoints(c echo.Context) error {
 	//TODO: implementation here
-	h.Processor.GetPoints()
-	return c.JSON(http.StatusOK, "points response")
+	response := h.Processor.GetPoints("receiptID from request")
+	return c.JSON(http.StatusOK, response)
 }
