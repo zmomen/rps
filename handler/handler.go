@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"rps/processor"
+	"rps/model"
 
 	"github.com/labstack/echo/v4"
 )
@@ -13,13 +14,17 @@ type Handler struct {
 
 func (h *Handler) ProcessReceipt(c echo.Context) error {
 	//TODO: implementation here
-	h.Processor.CalculatePoints()
+	var request model.ReceiptRequest
+	if err := c.Bind(&request); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	result := h.Processor.CalculatePoints(request)
 
-	return c.JSON(http.StatusCreated, 201)
+	return c.JSON(http.StatusCreated, result)
 }
 
 func (h *Handler) GetReceiptPoints(c echo.Context) error {
-	//TODO: implementation here
-	response := h.Processor.GetPoints("receiptID from request")
+	idParam := c.Param("id")
+	response := h.Processor.GetPoints(idParam)
 	return c.JSON(http.StatusOK, response)
 }
