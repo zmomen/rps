@@ -3,11 +3,17 @@
 A simple receipt processor API that takes in receipt data and calculates award points based on a set of defined business rules. See structure of the API below.
 
 ### How to run the API 
+Pre-requisites: this project is built with `go 1.21.0` 
+Assumption: the environment where this API will have golang installed in a docker container. 
 
 #### Installation
+There are some go packages that are needed to run this API. 
+- The API is built using the lightweight web framrwork Echo
+
 #### Run
 
-// TBD
+to run the API simply execute, `go run main.go`
+
 
 ---
 ### Code Structure 
