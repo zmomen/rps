@@ -1,5 +1,8 @@
 # Receipt Processor Service 
 
+
+### Introduction
+
 A simple receipt processor API that takes in receipt data and calculates award points based on a set of defined business rules. 
 
 This projects uses the lightweight web framrwork [Echo](https://echo.labstack.com/) to set up an API server. The API offers a `POST` endpoint to upload receipts and return unique ID. It also offers a `GET` endpoint that takes an ID and returns point totals representing points awarded. 
@@ -10,9 +13,81 @@ Assumption: the environment where this API will have golang installed in a docke
 
 #### Installation
 
+Run `go get` to install packages. This will install the `Echo` web framework and its middleware as well as the UUID generator. 
+
 #### Run
 
-to run the API simply execute, `go run main.go`
+to run the API simply execute, `go run main.go`. This will start a web server on the default `Echo` port: 1323. 
+
+#### Sample input and output. 
+Interact with the API with an http requester, e.g., `curl`. 
+
+- Sample POST request (note the Content-Type header): 
+
+    ```
+    > curl -v localhost:1323/receipts/process -d '{               "retailer": "M&M Corner Market",
+    "purchaseDate": "2022-03-20",
+    "purchaseTime": "14:33",
+    "items": [
+        {
+        "shortDescription": "Gatorade",
+        "price": "2.25"
+        },{
+        "shortDescription": "Gatorade",
+        "price": "2.25"
+        },{
+        "shortDescription": "Gatorade",
+        "price": "2.25"
+        },{
+        "shortDescription": "Gatorade",
+        "price": "2.25"
+        }
+    ],
+    "total": "9.00"
+    }' -H 'Content-Type: application/json'
+    ```
+- Response (note the ID): 
+
+    ```
+    *   Trying 127.0.0.1:1323...
+    * Connected to localhost (127.0.0.1) port 1323 (#0)
+    > POST /receipts/process HTTP/1.1
+    > Host: localhost:1323
+    > User-Agent: curl/8.1.2
+    > Accept: */*
+    > Content-Type: application/json
+    > Content-Length: 409
+    >
+    < HTTP/1.1 201 Created
+    < Content-Type: application/json; charset=UTF-8
+    < Date: Mon, 04 Sep 2023 14:44:54 GMT
+    < Content-Length: 46
+    <
+    {"id":"1b24c44f-a9bb-4617-8cee-18e8462ead9a"}
+    * Connection #0 to host localhost left intact
+    ```
+
+- Sample GET request: 
+    ```
+    > curl -v localhost:1323/receipts/ffe0f5d6-5944-4f9f-a825-2ae412700004/points
+    ```
+- Response: 
+    ```
+    *   Trying 127.0.0.1:1323...
+    * Connected to localhost (127.0.0.1) port 1323 (#0)
+    > GET /receipts/ffe0f5d6-5944-4f9f-a825-2ae412700004/points HTTP/1.1
+    > Host: localhost:1323
+    > User-Agent: curl/8.1.2
+    > Accept: */*
+    >
+    < HTTP/1.1 200 OK
+    < Content-Type: application/json; charset=UTF-8
+    < Date: Mon, 04 Sep 2023 14:47:55 GMT
+    < Content-Length: 15
+    <
+    {"points":109}
+    * Connection #0 to host localhost left intact
+    ```
 
 ---
 ### Code Structure 
@@ -58,6 +133,7 @@ Examples:
 
 - Other improvements may include authentication, proxying, etc. 
 
+---
 
 ### Testing
 
