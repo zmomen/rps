@@ -18,7 +18,10 @@ func (h *Handler) ProcessReceipt(c echo.Context) error {
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	result := h.Processor.CalculatePoints(request)
+	result, err := h.Processor.CalculatePoints(request)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
 
 	return c.JSON(http.StatusCreated, result)
 }

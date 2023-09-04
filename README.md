@@ -108,7 +108,13 @@ The code is separated into packages similar to a traditional model-controller st
     - `ProcessReceipt` function takes in the echo Context, passes the POST request data to the `Processor` struct which calculates the points and returns a unique ID for that receipt for retrieval. 
     - `GetReceiptPoints` function takes in the echo Context and a path parameter `id` to locate a receipt and return the award points.
 
-- `processor` package: This package contains the `Processor` struct which handles the business rules defined for calculating award points based on data in the receipt
+- `processor` package: This package contains the `Processor` struct which handles the business rules defined for calculating award points based on data in the receipt. 
+
+#### Error handling
+-  in `processor`, basic error handling is available for date/time parsing. An explicit error is returned if parsing fails. This causes the API to return a `StatusInternalServerError`.  
+
+- Similar functionality can be replicated to handle a variety of errors when calculating rewards. These errors will bubble up to the `handler` layer which will throw the appropriate HTTP status code error. 
+
 
 #### Rationale and future improvement scenarios
 
@@ -121,6 +127,8 @@ Examples:
 - Introduce new rewards calcuations can be handled by simply creating a new function.
 
 - Changing the rules for a specific calculation is isolated to helper functions. E.g., changing the calculation for retailer name is isolated in the `calcPointsRetailerName` helper function. 
+
+- explicity logic errors and error messages.
 
 - Data storage. A new interface can be injected in the `processor` struct, e.g., `"database/sql"` go package. That way, receipt data and award points can be persisted for better analytics. 
 

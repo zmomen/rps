@@ -20,19 +20,26 @@ var (
 
 // Define a global regular expression pattern
 
-func (p *Processor) CalculatePoints(request model.ReceiptRequest) model.ReceiptResponse {
+func (p *Processor) CalculatePoints(request model.ReceiptRequest) (model.ReceiptResponse, error) {
+	var err error
 	receiptPoints := 0
 	receiptPoints += p.calcPointsRetailerName(request.Retailer)
 	receiptPoints += p.calcPointsReceiptTotal(request.Total)
 	receiptPoints += p.calcPointsItems(request.Items)
-	receiptPoints += p.calcPointsDateTime(request.PurchaseDate, request.PurchaseTime)
 
+	dateTimePoints, err := p.calcPointsDateTime(request.PurchaseDate, request.PurchaseTime)
+
+	if err != nil {
+		return model.ReceiptResponse{}, err
+	} else {
+		receiptPoints += dateTimePoints
+	}
 	// TODO: generate some unique ID per receipt
 	resp := model.ReceiptResponse{
 		ID: uuid.New().String(),
 	}
 	ReceiptPointsDB[resp.ID] = receiptPoints
-	return resp
+	return resp, nil
 }
 
 func (p *Processor) GetPoints(receiptID string) model.PointsResponse {
@@ -85,9 +92,13 @@ func (p *Processor) calcPointsItems(items []model.Item) int {
 	return totalPoints
 }
 
-func (p *Processor) calcPointsDateTime(purchaseDate, purchaseTime string) int {
+func (p *Processor) calcPointsDateTime(purchaseDate, purchaseTime string) (int, error) {
 	totalPoints := 0
-	date, _ := time.Parse("2006-01-02 15:04", purchaseDate+" "+purchaseTime)
+	date, err := time.Parse("2006-01-02 15:04", purchaseDate+" "+purchaseTime)
+
+	if err != nil {
+		return 0, err
+	}
 
 	// check if odd day
 	if date.Day()%2 == 1 {
@@ -99,5 +110,5 @@ func (p *Processor) calcPointsDateTime(purchaseDate, purchaseTime string) int {
 		totalPoints += 10
 	}
 
-	return totalPoints
+	return totalPoints, nil
 }
