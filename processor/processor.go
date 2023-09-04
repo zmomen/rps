@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/google/uuid"
 )
 
 type Processor struct{}
@@ -27,7 +29,7 @@ func (p *Processor) CalculatePoints(request model.ReceiptRequest) model.ReceiptR
 
 	// TODO: generate some unique ID per receipt
 	resp := model.ReceiptResponse{
-		ID: "idd",
+		ID: uuid.New().String(),
 	}
 	ReceiptPointsDB[resp.ID] = receiptPoints
 	return resp
