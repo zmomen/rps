@@ -13,7 +13,7 @@ type Handler struct {
 }
 
 func (h *Handler) ProcessReceipt(c echo.Context) error {
-	//TODO: implementation here
+	
 	var request model.ReceiptRequest
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
